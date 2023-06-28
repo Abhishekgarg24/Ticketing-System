@@ -1,0 +1,265 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_TypeOfTickets",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amountOfTickets",
+				"type": "uint256"
+			}
+		],
+		"name": "BuyTicket",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_Event_Name",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_NumberOfTypesOfTickets",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string[]",
+				"name": "TYPEsOfTickets",
+				"type": "string[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "pricesOfTickets",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "SupplyOftickets",
+				"type": "uint256[]"
+			}
+		],
+		"name": "CreateEvent",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "EventDetails",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "Event_Name",
+						"type": "string"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "TypeOfTicket",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "priceOfType",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "supply",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct TicketingSystem.ticketType[]",
+						"name": "typesOfTickets",
+						"type": "tuple[]"
+					},
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"internalType": "contract Erc721",
+						"name": "nft_smartContract_Address",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "NumberOfTypesOfTickets",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "buyerOfTicket",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "TypeOfTicket",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "Amount_Paid",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "NftGenrated",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct TicketingSystem.TicketsOriganizer[]",
+						"name": "orgnizeTickets",
+						"type": "tuple[]"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalsupply",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct TicketingSystem.Event",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "EventManagement",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "Event_Name",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "contract Erc721",
+				"name": "nft_smartContract_Address",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "NumberOfTypesOfTickets",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "totalsupply",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "Id",
+				"type": "uint256"
+			}
+		],
+		"name": "Withdraw",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_TypeOfTickets",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amountOfTickets",
+				"type": "uint256"
+			}
+		],
+		"name": "getFundDetail",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "Id",
+				"type": "uint256"
+			}
+		],
+		"name": "refund",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "payable",
+		"type": "function"
+	}
+]
