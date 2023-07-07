@@ -1,17 +1,15 @@
 const express = require('express');
 const app = express();
+require('dotenv').config();
 const Web3 = require('web3');
-const rpcUrl = "https://polygon-mumbai.g.alchemy.com/v2/fMUrbLjuZcVQFbEdAYkJ6CuRG7Qsfiz9";
+const { ethers , utils } = require('ethers');
+const rpcUrl = process.env.API_URL;
 const web3 = new Web3(rpcUrl);
-app.use(express.json());
-const privateKeys = ["562cdcc87e73682af22626a09946ad6f525e104143e73edc740ca98d1de2ac75",
-    "5cf36f45127f5ae97efd3cdab095ca129e82f1ed190dea63c0af32fad83cfb27",
-    "372f056a17fcf925cdbfeeb8ddf865fe505b194d6c950b7dd608a5db3e82eca9",
-    "d87e4be1391d6c891ed20886f3b5b18adf8b4fe67a5924b8b77698f3d7abd5c8",
-    "0b77112450b56c2eb2be95d624ed9bc205178b817ebba4afcbce3193da5fa51e",
-    "8c10a65acc45adc14f77612a351964c38fdd85da185de229b36d6410f96f2f29"];
+const path = require('path');
 
-  
+app.use(express.json());
+const privateKeys = JSON.parse(process.env.PRIVATE_KEY);
+  console.log(privateKeys[1])
   const accounts = privateKeys.map(privateKey => web3.eth.accounts.privateKeyToAccount(privateKey));
   // console.log(accounts)
   web3.eth.accounts.wallet.add(...accounts);
@@ -19,7 +17,7 @@ const privateKeys = ["562cdcc87e73682af22626a09946ad6f525e104143e73edc740ca98d1d
   web3.eth.defaultAccount = accounts[0].address;
 
 const contractABI = require('./abi.json');
-const contractAddress = '0x4F3abD347e31710Cc06668c9A2018201E319b6b0';
+const contractAddress = process.env.CONTRACT_ADDRESS;
 var contract ;
 
 
@@ -28,7 +26,16 @@ contract = new web3.eth.Contract(contractABI, contractAddress);
 //  console.log(contract)
 
 const creat_event = async (_Event_Name, _NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets) => {
-	await contract.methods.CreateEvent(_Event_Name, _NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets).send({from: web3.eth.defaultAccount, gas:"10000000"});
+  console.log(_Event_Name, _NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets);
+  console.log(TYPEsOfTickets);
+  let ticket = JSON.parse(TYPEsOfTickets);
+  // let tick = TYPEsOfTickets.replace(/'/g, '"');
+  let tick =  ["vvip","vip","normal"];
+  console.log("ticket array ", ticket);
+  console.log("tick array ", tick);
+  // console.log("tick parsed", JSON.parse(tick));
+
+	await contract.methods.CreateEvent(_Event_Name, _NumberOfTypesOfTickets, ticket, [10000,1000,100], [30,20,100]).send({from: web3.eth.defaultAccount, gas:"10000000"});
 }
 
 const buy_Ticket = async (id,
@@ -56,7 +63,7 @@ const buy_Ticket = async (id,
     data: data,
   };
 
-  const signedTx = await web3.eth.accounts.signTransaction(txObject,"5cf36f45127f5ae97efd3cdab095ca129e82f1ed190dea63c0af32fad83cfb27" );
+  const signedTx = await web3.eth.accounts.signTransaction(txObject,privateKeys[1] );
   const rawTx = signedTx.rawTransaction;
 
   await web3.eth.sendSignedTransaction(rawTx);
@@ -71,15 +78,15 @@ const withdraw = async () => {
   await contract.methods.Withdraw(2).send({from: web3.eth.defaultAccount, gas:"10000000"});
 }
 
-const getEventDetail = async () => {
-  const detail =  await contract.methods.EventDetails(1).call();
-  console.log(detail);
+const getEventDetail = async (id) => {
+ return await contract.methods.EventDetails(id).call();
+
 }
 
 
 
 
-getEventDetail();
+
 
 app.post('/buy_Ticket', async (req, res) => {
   try {
@@ -139,10 +146,25 @@ app.post('/withdraw', async (req, res) => {
     res.status(500).json({ error: 'An error occurred' });
   }
 });
+app.get('/eventDetail', async (req, res) => {
+  try {
+    const id = req.body.id;
+    const detail = await getEventDetail(id);
+    res.json(detail);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
+app.get("/", (req, res)=>{
+  res.sendFile(path.join(__dirname, '/frontend.html'));
+})
 
 app.listen(3000, () => {
   console.log('Server started on port 3000');
 });
+
+
 
 

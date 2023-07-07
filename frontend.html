@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Management Form</title>
+</head>
+<body>
+  <h1>Create Event</h1>
+  <form id="createEventForm">
+    <label for="eventName">Event Name:</label>
+    <input type="text" id="eventName" name="eventName" required><br>
+
+    <label for="numTicketTypes">Number of Ticket Types:</label>
+    <input type="number" id="numTicketTypes" name="numTicketTypes" required><br>
+
+    <label for="ticketTypes">Ticket Types:</label>
+    <input type="text" id="ticketTypes" name="ticketTypes" required><br>
+
+    <label for="ticketPrices">Ticket Prices:</label>
+    <input type="text" id="ticketPrices" name="ticketPrices" required><br>
+
+    <label for="ticketSupply">Ticket Supply:</label>
+    <input type="text" id="ticketSupply" name="ticketSupply" required><br>
+
+    <input type="submit" value="Create Event">
+  </form>
+
+  <h1>Buy Ticket</h1>
+  <form id="buyTicketForm">
+    <label for="eventID">Event ID:</label>
+    <input type="text" id="eventID" name="eventID" required><br>
+
+    <label for="ticketType">Ticket Type:</label>
+    <input type="text" id="ticketType" name="ticketType" required><br>
+
+    <label for="ticketAmount">Ticket Amount:</label>
+    <input type="number" id="ticketAmount" name="ticketAmount" required><br>
+
+    <input type="submit" value="Buy Ticket">
+  </form>
+
+  <h1>Refund</h1>
+  <form id="refundForm">
+    <label for="refundEventID">Event ID:</label>
+    <input type="text" id="refundEventID" name="refundEventID" required><br>
+
+    <input type="submit" value="Refund">
+  </form>
+
+  <h1>Withdraw</h1>
+  <form id="withdrawForm">
+    <label for="withdrawEventID">Event ID:</label>
+    <input type="text" id="withdrawEventID" name="withdrawEventID" required><br>
+
+    <input type="submit" value="Withdraw">
+  </form>
+
+  <h1>Get Event Detail</h1>
+  <form id="getEventDetailForm">
+    <label for="eventDetailID">Event ID:</label>
+    <input type="text" id="eventDetailID" name="eventDetailID" required><br>
+
+    <input type="submit" value="Get Event Detail">
+  </form>
+
+  <script>
+    // Event Listener for Create Event Form
+    document.getElementById('createEventForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const eventName = document.getElementById('eventName').value;
+      const numTicketTypes = document.getElementById('numTicketTypes').value;
+      const ticketTypes = document.getElementById('ticketTypes').value;
+      const ticketPrices = document.getElementById('ticketPrices').value;
+      const ticketSupply = document.getElementById('ticketSupply').value;
+
+      // Make API request to create event
+      fetch('/create-event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Event_Name: eventName,
+          NumberOfTypesOfTickets: numTicketTypes,
+          TYPEsOfTickets: ticketTypes,
+          pricesOfTickets: ticketPrices,
+          SupplyOftickets: ticketSupply
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.message);
+        // Handle success or show a success message
+      })
+      .catch(error => {
+        console.error(error);
+        // Handle error or show an error message
+      });
+    });
+
+    // Event Listener for Buy Ticket Form
+    document.getElementById('buyTicketForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const eventID = document.getElementById('eventID').value;
+      const ticketType = document.getElementById('ticketType').value;
+      const ticketAmount = document.getElementById('ticketAmount').value;
+
+      // Make API request to buy ticket
+      fetch('/buy_Ticket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: eventID,
+          TypeOfTickets: ticketType,
+          amountOfTickets: ticketAmount
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.message);
+        // Handle success or show a success message
+      })
+      .catch(error => {
+        console.error(error);
+        // Handle error or show an error message
+      });
+    });
+
+    // Event Listener for Refund Form
+    document.getElementById('refundForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const refundEventID = document.getElementById('refundEventID').value;
+
+      // Make API request to refund
+      fetch('/Refund', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: refundEventID
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.message);
+        // Handle success or show a success message
+      })
+      .catch(error => {
+        console.error(error);
+        // Handle error or show an error message
+      });
+    });
+
+    // Event Listener for Withdraw Form
+    document.getElementById('withdrawForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const withdrawEventID = document.getElementById('withdrawEventID').value;
+
+      // Make API request to withdraw
+      fetch('/withdraw', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: withdrawEventID
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.message);
+        // Handle success or show a success message
+      })
+      .catch(error => {
+        console.error(error);
+        // Handle error or show an error message
+      });
+    });
+
+    // Event Listener for Get Event Detail Form
+    document.getElementById('getEventDetailForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const eventDetailID = document.getElementById('eventDetailID').value;
+
+      // Make API request to get event detail
+      fetch('/eventDetail', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: eventDetailID
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        // Handle success or display the event details
+      })
+      .catch(error => {
+        console.error(error);
+        // Handle error or show an error message
+      });
+    });
+  </script>
+</body>
+</html>
