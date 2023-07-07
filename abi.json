@@ -1,5 +1,91 @@
 [
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "eventID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "EventName",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "eventTime",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "contract Erc721",
+				"name": "nftAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "totalSupply",
+				"type": "uint256"
+			}
+		],
+		"name": "EVENT",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "eventId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "EventName",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "TicketId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "ticketType",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "ticketOwner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "contract Erc721",
+				"name": "nftAddress",
+				"type": "address"
+			}
+		],
+		"name": "TICKET",
+		"type": "event"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -18,7 +104,13 @@
 			}
 		],
 		"name": "BuyTicket",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "message",
+				"type": "string"
+			}
+		],
 		"stateMutability": "payable",
 		"type": "function"
 	},
@@ -28,6 +120,11 @@
 				"internalType": "string",
 				"name": "_Event_Name",
 				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_eventTime",
+				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
@@ -112,6 +209,11 @@
 					},
 					{
 						"internalType": "uint256",
+						"name": "EventTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
 						"name": "NumberOfTypesOfTickets",
 						"type": "uint256"
 					},
@@ -180,6 +282,11 @@
 				"internalType": "contract Erc721",
 				"name": "nft_smartContract_Address",
 				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "EventTime",
+				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",

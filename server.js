@@ -2,13 +2,14 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const Web3 = require('web3');
-const { ethers , utils } = require('ethers');
+const ethJsSigner = require('ethjs-signer');
 const rpcUrl = process.env.API_URL;
 const web3 = new Web3(rpcUrl);
 const path = require('path');
 
 app.use(express.json());
 const privateKeys = JSON.parse(process.env.PRIVATE_KEY);
+console.log(privateKeys);
   console.log(privateKeys[1])
   const accounts = privateKeys.map(privateKey => web3.eth.accounts.privateKeyToAccount(privateKey));
   // console.log(accounts)
@@ -25,17 +26,15 @@ var contract ;
 contract = new web3.eth.Contract(contractABI, contractAddress);
 //  console.log(contract)
 
-const creat_event = async (_Event_Name, _NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets) => {
-  console.log(_Event_Name, _NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets);
-  console.log(TYPEsOfTickets);
-  let ticket = JSON.parse(TYPEsOfTickets);
-  // let tick = TYPEsOfTickets.replace(/'/g, '"');
-  let tick =  ["vvip","vip","normal"];
-  console.log("ticket array ", ticket);
-  console.log("tick array ", tick);
-  // console.log("tick parsed", JSON.parse(tick));
+const creat_event = async (_Event_Name, _EventTime,_NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets) => {
+  
+ //three lines are for frontend.html
+  const arrayOfprices= JSON.parse(pricesOfTickets);
+  const arrayOfcountTicket = JSON.parse(SupplyOftickets);
+  await contract.methods.CreateEvent(_Event_Name,_EventTime, _NumberOfTypesOfTickets, TYPEsOfTickets, arrayOfprices, arrayOfcountTicket).send({from: web3.eth.defaultAccount, gas:"10000000"});
 
-	await contract.methods.CreateEvent(_Event_Name, _NumberOfTypesOfTickets, ticket, [10000,1000,100], [30,20,100]).send({from: web3.eth.defaultAccount, gas:"10000000"});
+  //this line is for hiting api from postman 
+	// await contract.methods.CreateEvent(_Event_Name,_EventTime, _NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets).send({from: web3.eth.defaultAccount, gas:"10000000"});
 }
 
 const buy_Ticket = async (id,
@@ -45,7 +44,7 @@ const buy_Ticket = async (id,
   const checksummedAddress1 = web3.utils.toChecksumAddress(accounts[1].address);
   
   const checksummedAddress2 = web3.utils.toChecksumAddress(accounts[2].address);
-  const val = await contract.methods.getFundDetail(id,
+  const val = await contract.methods.getFundDetail(id, 
     TypeOfTickets,
     amountOfTickets).call();
     console.log(val);
@@ -74,8 +73,8 @@ const refund = async (id) => {
   await contract.methods.refund(id).send({from: web3.eth.defaultAccount, gas:"10000000"});
 }
 
-const withdraw = async () => {
-  await contract.methods.Withdraw(2).send({from: web3.eth.defaultAccount, gas:"10000000"});
+const withdraw = async (id) => {
+  await contract.methods.Withdraw(id).send({from: web3.eth.defaultAccount, gas:"10000000"});
 }
 
 const getEventDetail = async (id) => {
@@ -107,13 +106,15 @@ app.post('/buy_Ticket', async (req, res) => {
 
 app.post('/create-event', async (req, res) => {
   try {
+    console.log(req.body);
     const _Event_Name = req.body.Event_Name;
+    const _EventTime = req.body.EventTime;
     const _NumberOfTypesOfTickets = req.body.NumberOfTypesOfTickets;
     const TYPEsOfTickets = req.body.TYPEsOfTickets;
     const pricesOfTickets = req.body.pricesOfTickets;
     const SupplyOftickets = req.body.SupplyOftickets;
 
-    await creat_event(_Event_Name, _NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets);
+    await creat_event(_Event_Name,_EventTime, _NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets);
 
     res.json({ message: 'Event created successfully' });
   } catch (error) {
@@ -146,9 +147,9 @@ app.post('/withdraw', async (req, res) => {
     res.status(500).json({ error: 'An error occurred' });
   }
 });
-app.get('/eventDetail', async (req, res) => {
+app.get('/eventDetail/:id', async (req, res) => {
   try {
-    const id = req.body.id;
+    const id = req.params.id;
     const detail = await getEventDetail(id);
     res.json(detail);
   } catch (error) {
@@ -156,15 +157,14 @@ app.get('/eventDetail', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-app.get("/", (req, res)=>{
-  res.sendFile(path.join(__dirname, '/frontend.html'));
+app.get("/",(req,res)=>{
+  res.sendFile(path.join(__dirname,'/frontend.html'));
 })
+
+
 
 app.listen(3000, () => {
   console.log('Server started on port 3000');
 });
-
-
 
 

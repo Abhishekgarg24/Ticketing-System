@@ -14,8 +14,7 @@ describe("utility contract", () => {
   let main;
   let owner;
   let buyer;
-  let wh1;
-  let wh2;
+  
 
  
   beforeEach(async () => {
@@ -24,129 +23,137 @@ describe("utility contract", () => {
     tokenErc721 = await TokenErc721.deploy();
 
 
-    Main = await ethers.getContractFactory("utility");
+    Main = await ethers.getContractFactory("TicketingSystem");
 
 
     main = await Main.deploy();
-    [owner,buyer,wh1,wh2] =  await ethers.getSigners();
+    [owner,buyer] =  await ethers.getSigners();
 
     
 
   });
 
   it("event id should increase after calling create event function ",async function () {
-    var itemId = main.EventId();
-    main.CreateEvent("f2",100,30,120,100,10000,[wh1,wh2],10,1000);
-    var itemIdAfter = main.EventId();
+    var itemId =await main.EventId();
+    // console.log(itemId);
+    await main.CreateEvent("f2",100,2,["vip","ord"],[1000,100],[10,20]);
+    var itemIdAfter =await main.EventId();
+    // console.log(itemIdAfter)
     expect (itemId).not.to.equal(itemIdAfter);
     
   });
-  it("owner shouldnot be calling buy ticket function", async function(){
+  it("nft contract which genrate tickets should be differ with event", async function(){
     
-    await main.connect(owner).CreateEvent("f2",100,30,120,100,10000,["0x985e860DD7CAa49A473Fc900d7f26DB53b2E60C2","0xA162E70e26af2950a8Fb774a90eC95c317031842"],10,1000);
-
-    await expect(main.connect(owner).BuyTicket(1,100,{ value: 100 })).to.be.revertedWith("owner can't buy ticket");
+    await main.CreateEvent("f2",100,2,["vip","ord"],[1000,100],[10,20]);
+    const event = await main.EventDetails(1);
+    const nft = await event.nft_smartContract_Address;
+    // console.log(nft);
+    await main.CreateEvent("f2",100,2,["vip","ord"],[1000,100],[10,20]);
+    const event2 = await main.EventDetails(2);
+    const nft2 = await event2.nft_smartContract_Address;
+    // console.log(nft2);
+    expect (nft).not.to.equal(nft2);
   });
 
-  it("after calling buy ticket function successfully .contract balance should be increased", async function(){
-    const contractBalance = await ethers.provider.getBalance(main);
-    // console.log(contractBalance)
-    await main.connect(owner).CreateEvent("f2",100,30,120,100,10000,[wh1,wh2],10,1000);
-    
-    await main.connect(wh1).BuyTicket(1,10,{ value: 10 });
+  it("number of types of ticket should be equal to length of array of types ", async function(){
+    await expect(main.CreateEvent("f2",100,3,["vip","ord"],[1000,100],[10,20])).to.be.revertedWith("exceeded the limit of Number Of Types Of Tickets ");
+});
 
-    const contractBalanceAfter = await ethers.provider.getBalance(main);
-    // console.log(contractBalanceAfter)
-    expect (contractBalance).not.to.equal(contractBalanceAfter);
+it("total supply of ticket should be eaqual to sum of elements inputed into suply of each type",async function(){
+  var sum= 20+30;
+  // console.log(sum);
+  await main.CreateEvent("f2",100,2,["vip","ord"],[1000,100],[20,30]);
+  const event = await main.EventDetails(1);
+    const totalsupply = await event.totalsupply;
+    // console.log(Number(totalsupply));
+    expect (totalsupply).to.equal(sum);
+});
+
+
+it("Event which is named as EVENT should be emitted when calling CreateEvent function" , async function(){
+  await expect(main.CreateEvent("f2",100,2,["vip","ord"],[1000,100],[10,20])).to.emit(main, 'EVENT')
+});
+
+
+it("buying of ticket can be procedded by any one but not owner", async function(){
+  await main.connect(owner).CreateEvent("f2",100,2,["vip","ord"],[1000,100],[10,20]);
+  await expect( main.connect(owner).BuyTicket(1,"vip",2)).to.be.revertedWith("owner can't buy ticket");
+});
+
+it("buying of ticket can be procedded only time is not over", async function(){
+  await main.connect(owner).CreateEvent("f2",1,2,["vip","ord"],[1000,100],[10,20]);
+  await(2000);
+  await expect( main.connect(buyer).BuyTicket(1,"vip",2)).to.be.revertedWith("event is over");
+});
+
+it("Ticket Type Should present in event for which we are buying", async function(){
+  await main.connect(owner).CreateEvent("f2",100,2,["vip","ord"],[1000,100],[10,20]);
+  await expect( main.connect(buyer).BuyTicket(1,"vvip",2)).to.be.revertedWith("Invalid ticket type");
+});
+
+it("payment should be done according to type of ticket and count  both" , async function(){
+  await main.connect(owner).CreateEvent("f2",100,2,["vip","ord"],[1000,100],[10,20]);
+  // const calculatedPayment = 1000*2;
+  // console.log(calculatedPayment);
+  const payment =  await main.getFundDetail(1,"vip",2);
+  // console.log(payment);
+  await expect(main.connect(buyer).BuyTicket(1,"vip",2,{
+    value : 50
+  })).to.be.revertedWith("not enough funds");
+});
+
+it("Event which is named as TICKET should be emitted when calling BuyTicket function" , async function(){
+  await main.connect(owner).CreateEvent("f2",100,2,["vip","ord"],[1000,100],[10,20]);
+  const payment =  await main.getFundDetail(1,"vip",2);
+  await expect(main.connect(buyer).BuyTicket(1,"vip",2,{
+    value : payment
+  })).to.emit(main, 'TICKET')
+});
+
+
+it("getFundDetail function give exact information about payment in buyTicket", async function(){
+  await main.connect(owner).CreateEvent("f2",100,2,["vip","ord"],[1000,100],[10,20]);
+  const payment =  Number(await main.getFundDetail(1,"vip",2));
+  await expect(main.connect(buyer).BuyTicket(1,"vip",2,{
+    value : payment+50
+  })).to.be.revertedWith("not enough funds");
+});
+
+it("withdraw function should be called by only owner", async function(){
+  await main.connect(owner).CreateEvent("f2",5,2,["vip","ord"],[1000,100],[10,20]);
+  const payment =  await main.getFundDetail(1,"vip",2);
+  await main.connect(buyer).BuyTicket(1,"vip",2,{
+    value : payment
   });
+  await(5000);
+  await expect(main.connect(buyer).Withdraw(1)).to.be.revertedWith("only owner can withadraw amount");
+});
 
-  it("buying of ticket is not possible at presale price by whitelisters after presale time ends", async function(){
-    
-    await main.connect(owner).CreateEvent("f2",100,30,0,100,10000,[wh1,wh2],10,1000);
-    
-    await expect(main.connect(wh1).BuyTicket(1,10,{ value: 10 })).to.be.revertedWith("please put money according to normal sale");
-
-    
+it("withdraw function should be called after event is over", async function(){
+  await main.connect(owner).CreateEvent("f2",500,2,["vip","ord"],[1000,100],[10,20]);
+  const payment =  await main.getFundDetail(1,"vip",2);
+  await main.connect(buyer).BuyTicket(1,"vip",2,{
+    value : payment
   });
+  await expect(main.connect(owner).Withdraw(1)).to.be.revertedWith("Can't withdraw till event is ever");
+});
 
-  it("buying of ticket is not possible at normal price by whitelisters when presale time is going", async function(){
-    
-    await main.connect(owner).CreateEvent("f2",100,30,120,100,10000,[wh1,wh2],10,1000);
-    
-    await expect(main.connect(wh1).BuyTicket(1,100,{ value: 100 })).to.be.revertedWith("please put money according to presale");
-
-    
+it("refund function should be called by only owner", async function(){
+  await main.connect(owner).CreateEvent("f2",500,2,["vip","ord"],[1000,100],[10,20]);
+  const payment =  await main.getFundDetail(1,"vip",2);
+  await main.connect(buyer).BuyTicket(1,"vip",2,{
+    value : payment
   });
+  await expect(main.connect(buyer).refund(1)).to.be.revertedWith("only owner can refund amount");
+});
 
-  it("while buying put msg.value and price same only then it will move further", async function(){
-    
-    await main.connect(owner).CreateEvent("f2",100,30,120,100,10000,[wh1,wh2],10,1000);
-    
-    await expect(main.connect(wh1).BuyTicket(1,100,{ value: 10 })).to.be.revertedWith("price and payment should be same");
-
-    
+it("refund function should be called till event time is over", async function(){
+  await main.connect(owner).CreateEvent("f2",2,2,["vip","ord"],[1000,100],[10,20]);
+  const payment =  await main.getFundDetail(1,"vip",2);
+  await main.connect(buyer).BuyTicket(1,"vip",2,{
+    value : payment
   });
-  it("A non whitelister can't get ticket at less price", async function(){
-    
-    await main.connect(owner).CreateEvent("f2",100,30,120,100,10000,[wh1,wh2],10,1000);
-    
-    await expect(main.connect(buyer).BuyTicket(1,100,{ value: 100})).to.be.revertedWith("not an aligible condition satisfied for buying ticket");
-
-    
-  });
-
-  it("A non whitelister can't partcipate in presale", async function(){
-    
-    await main.connect(owner).CreateEvent("f2",100,30,120,100,10000,[wh1,wh2],10,1000);
-    
-    await expect(main.connect(buyer).BuyTicket(1,10,{ value: 10})).to.be.revertedWith("not an aligible condition satisfied for buying ticket");
-
-    
-  });
-
-  it("A white Lister can't buy at ordinary price", async function(){
-    await main.connect(owner).CreateEvent("f2",100,30,120,100,10000,[wh1,wh2],10,1000);
-    
-    await expect(main.connect(wh1).BuyTicket(1,10000,{ value: 10000})).to.be.revertedWith("please put money according to presale");
-
-  })
-
-  it("owner should be calling refund function", async function(){
-    
-    main.CreateEvent("f2",100,30,120,100,10000,[wh1,wh2],10,1000);
-    main.connect(wh1).BuyTicket(1,10,{ value: 10})
-    await expect( main.connect(wh1).refund(1)).to .be. revertedWith("only owner can refund amount")
-  });
-
-  it("owner should be calling withdraw function", async function(){
-    main.CreateEvent("f2",100,30,120,100,10000,[wh1,wh2],10,1000);
-    main.connect(wh1).BuyTicket(1,10,{ value: 10});
-   
-    await expect( main.connect(wh1).Withdraw(1)).to .be. revertedWith("only owner can withdraw amount");
-  });
-
-
-  // it("if presale is going and payment done accordingly so vip ticket should be genrated", async function(){
-  //   [owner,buyer,wh1,wh2] = await ethers.getSigners();
-  //   await main.connect(owner).CreateEvent("f2",100,30,120,100,10000,[wh1,wh2],10,1000);
-  //   const mapping = await main.EventManagement(1)
-  //   const add = mapping.nft_smartContract_Address;
-  //   tokenErc721.address = add; 
-  //   console.log(tokenErc721.address ,add)
-  //   const balance = await tokenErc721.balanceOf(wh1)
-  //   await main.connect(wh1).BuyTicket(1, 10, { value: 10 })
-    
-    
-  //  const balanceAfter = await tokenErc721.balanceOf(wh1)
-
-  //  await expect(balance).not.to.equal(balanceAfter);
-  // });
-
-
-  
-
-
-
-
-
+  await(2000);
+  await expect(main.connect(owner).refund(1)).to.be.revertedWith("Can't refund when event is over");
+});
 });

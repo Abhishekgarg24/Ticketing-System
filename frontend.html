@@ -9,11 +9,14 @@
     <label for="eventName">Event Name:</label>
     <input type="text" id="eventName" name="eventName" required><br>
 
+    <label for="eventTime">Event Time:</label>
+    <input type="text" id="eventTime" name="eventTime" required><br>
+
     <label for="numTicketTypes">Number of Ticket Types:</label>
     <input type="number" id="numTicketTypes" name="numTicketTypes" required><br>
 
     <label for="ticketTypes">Ticket Types:</label>
-    <input type="text" id="ticketTypes" name="ticketTypes" required><br>
+    <input type="text" id="ticketTypes" name="ticketTypes" required><button type="button" style="width:50px;"  onclick="makeArray()">+</button><br>
 
     <label for="ticketPrices">Ticket Prices:</label>
     <input type="text" id="ticketPrices" name="ticketPrices" required><br>
@@ -60,16 +63,27 @@
     <input type="text" id="eventDetailID" name="eventDetailID" required><br>
 
     <input type="submit" value="Get Event Detail">
+    <p id="eventResult">Event details will be shown here.</p>
   </form>
 
   <script>
     // Event Listener for Create Event Form
+
+    var arr = [];
+    console.log("thisis arr", arr);
+		const makeArray = () =>{
+			var val = document.getElementById("ticketTypes").value;
+			arr.push(val.toString());
+			console.log(arr)
+		}
+
     document.getElementById('createEventForm').addEventListener('submit', function (event) {
       event.preventDefault();
 
       const eventName = document.getElementById('eventName').value;
+      const eventTime = document.getElementById('eventTime').value;
       const numTicketTypes = document.getElementById('numTicketTypes').value;
-      const ticketTypes = document.getElementById('ticketTypes').value;
+      const ticketTypes = arr;
       const ticketPrices = document.getElementById('ticketPrices').value;
       const ticketSupply = document.getElementById('ticketSupply').value;
 
@@ -81,6 +95,7 @@
         },
         body: JSON.stringify({
           Event_Name: eventName,
+          EventTime: eventTime ,
           NumberOfTypesOfTickets: numTicketTypes,
           TYPEsOfTickets: ticketTypes,
           pricesOfTickets: ticketPrices,
@@ -96,6 +111,8 @@
         console.error(error);
         // Handle error or show an error message
       });
+      arr=[];
+      document.getElementById("ticketTypes").value = '';
     });
 
     // Event Listener for Buy Ticket Form
@@ -187,23 +204,17 @@
     document.getElementById('getEventDetailForm').addEventListener('submit', function (event) {
       event.preventDefault();
 
-      const eventDetailID = document.getElementById('eventDetailID').value;
+  
+    const eventDetailID = document.getElementById('eventDetailID').value;
 
-      // Make API request to get event detail
-      fetch('/eventDetail', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          id: eventDetailID
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        // Handle success or display the event details
-      })
+    // Make API request to get event detail
+    fetch(`/eventDetail/${eventDetailID}`)
+    .then(response => response.json())
+    .then(data => {
+    console.log(JSON.stringify(data));
+    document.getElementById("eventResult").innerHTML = JSON.stringify(data);
+    // Handle success or display the event details
+    })
       .catch(error => {
         console.error(error);
         // Handle error or show an error message
