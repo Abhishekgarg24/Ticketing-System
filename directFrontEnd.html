@@ -1,565 +1,220 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Erc20 TRANSACTION market DAPP</title>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
-    <style>
+	<title>Erc20 TRANSACTION market DAPP</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+	
 
-        body {
-            background-color: grey;
-            font-family: tahoma;
-            font-size: 33px;
-            display: flex;
-            flex-direction: row;
-        }
-        button {
-            background-color: ghostwhite;
-            font-size: 33px;
-            padding: 5px;
-            font-family: Impact;
-        }
-        input {
-            width: 25vw;
-            height: 30px;
-            font-size: 25px;
-            font-family: tahoma;
-            outline: none;
-        }
-        #readArea {
-            flex-basis: 50%;
-        }
-        #writeArea {
-            flex-basis: 50%;
-        }
-        button:hover {
-            background-color: lightsalmon;
-        }
-        p{
-            font-size: small;
-        }
+	<style>
+		body {
+			background-color: grey;
+			font-family: tahoma;
+			font-size: 33px;
+			display: flex;
+			flex-direction: row;
+		}
 
-    </style>
+		button {
+			background-color: ghostwhite;
+			font-size: 33px;
+			padding: 5px;
+			font-family: Impact;
+		}
+
+		input {
+			width: 25vw;
+			height: 30px;
+			font-size: 25px;
+			font-family: tahoma;
+			outline: none;
+		}
+
+		#readArea {
+			flex-basis: 50%;
+		}
+
+		#writeArea {
+			flex-basis: 50%;
+		}
+
+		button:hover {
+			background-color: lightsalmon;
+		}
+
+		p {
+			font-size: small;
+		}
+	</style>
 </head>
+
 <body>
 
-    <div id="readArea">
-        <button onclick="connectMetamask()">CONNECT TO METAMASK</button>
-        <p id="userArea">Status: Not connected to Metamask</p>
+	<div id="readArea">
+		<button onclick="connectMetamask()">CONNECT TO METAMASK</button>
+		<p id="userArea">Status: Not connected to Metamask</p>
 
-        <button onclick="connectContract()">CONNECT TO CONTRACT</button>
-        <p id="contractArea">Status: Not connected to Contract</p>
+		<button onclick="connectContract()">CONNECT TO CONTRACT</button>
+		<p id="contractArea">Status: Not connected to Contract</p>
 
-        <button onclick="EventCreate()">create an event</button>
-         <br>
-        <input type="text" id="eventName" placeholder="eventName "> <br>
+		<button onclick="EventCreate()">create an event</button>
+		<br>
+		<input type="text" id="eventName" placeholder="eventName "> <br>
 		<input type="text" id="eventTime" placeholder="eventTime "> <br>
-        <input type="number" id="numberOfTicketTypes" placeholder="numberOfTicketTypes"> <br>
-        <!-- <input type="text" id="arrayOfTicketTypes" placeholder="arrayOfTicketTypes"> <br> -->
-		<input type="text" id="arrayOfTicketTypes" placeholder="arrayOfTicketTypes" ><button  style="width:50px; "  onclick="makeArray()">+</button> <br>
-        <input type="text" id="arrayOfTicketprices" placeholder="arrayOfTicketprices"> <br>
-        <input type="text" id="arrayOfTicketamount" placeholder="arrayOfTicketamount "> <br>
-        
-        <p id="createdEvent">event is going to be created by this function</p><br>
+		<input type="number" id="numberOfTicketTypes" placeholder="numberOfTicketTypes"> <br>
+		<!-- <input type="text" id="arrayOfTicketTypes" placeholder="arrayOfTicketTypes"> <br> -->
+		<input type="text" id="arrayOfTicketTypes" placeholder="arrayOfTicketTypes"><button style="width:50px; "
+			onclick="makeArray()">+</button> <br>
+		<input type="text" id="arrayOfTicketprices" placeholder="arrayOfTicketprices"> <br>
+		<input type="text" id="arrayOfTicketamount" placeholder="arrayOfTicketamount "> <br>
 
-        <button onclick="Withdraw()">withdraw</button> <br>
-        <input type="number" id="EVENTID" placeholder="Enter ID"> <br>
-        <p id="withdraw">withdraw is done by the owner</p><br>
+		<p id="createdEvent">event is going to be created by this function</p><br>
 
-        
-    </div>
-
-    <div id="writeArea">
-        
-        <button onclick="buyTicket()">Buy Tickets</button><br>
-        <input type="nuumber" id="eventID" name="eventID" required><br>
-        <input type="text" id="ticketType" name="ticketType" required><br>
-        <input type="number" id="ticketAmount" name="ticketAmount" required><br>
-
-        <p id="buy">this function is for buying ticket</p><br>
-
-        <button onclick="refunds()">refund</button> <br>
-        <input type="number" id="id" placeholder="Enter ID"> <br>
-        <p id="refunds">refund is done by the owner</p><br>
-        
-        <button onclick="GetEventDetail()">Get event Details</button><br>
-        <input type="number" id="EventId" placeholder="Enter eventId"><br> 
-        <p id="itemDetail0">on clicking this you will get detail</p>
-        <p id="itemDetail1" ></p>
-        <p id="itemDetail2"></p>
-        <p id="itemDetail3"></p>
-        <p id="itemDetail4"></p>
-        <p id="itemDetail5"></p>
-        <p id="itemDetail6"></p>
-        <p id="itemDetail7"></p><br>
+		<button onclick="Withdraw()">withdraw</button> <br>
+		<input type="number" id="EVENTID" placeholder="Enter ID"> <br>
+		<p id="withdraw">withdraw is done by the owner</p><br>
 
 
-    </div>
+	</div>
 
-    <script>
-        		var arr = [];
+	<div id="writeArea">
 
-		const makeArray = async() =>{
+		<button onclick="buyTicket()">Buy Tickets</button><br>
+		<input type="nuumber" id="eventID" name="eventID" required><br>
+		<input type="text" id="ticketType" name="ticketType" required><br>
+		<input type="number" id="ticketAmount" name="ticketAmount" required><br>
+
+		<p id="buy">this function is for buying ticket</p><br>
+
+		<button onclick="refunds()">refund</button> <br>
+		<input type="number" id="id" placeholder="Enter ID"> <br>
+		<p id="refunds">refund is done by the owner</p><br>
+
+		<button onclick="GetEventDetail()">Get event Details</button><br>
+		<input type="number" id="EventId" placeholder="Enter eventId"><br>
+		<p id="itemDetail0">on clicking this you will get detail</p>
+		<p id="itemDetail1"></p>
+		<p id="itemDetail2"></p>
+		<p id="itemDetail3"></p>
+		<p id="itemDetail4"></p>
+		<p id="itemDetail5"></p>
+		<p id="itemDetail6"></p>
+		<p id="itemDetail7"></p><br>
+
+
+	</div>
+
+	<script>
+		var arr = [];
+
+
+		const makeArray = async () => {
 			var val = document.getElementById("arrayOfTicketTypes").value;
 			arr.push(val.toString());
 			console.log(arr)
 		}
 
 
-        
-        let account;
-        const connectMetamask = async () => {
-            if(window.ethereum !== "undefined") {
-                const accounts = await ethereum.request({method: "eth_requestAccounts"});              
-                account = accounts[0];
-                console.log(account);
-                
-                document.getElementById("userArea").innerHTML = `User Account: ${account}`;
 
-                
-            }
-        }
-        const connectContract = async () => {
-            const contractABI =[
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "eventID",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "EventName",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "eventTime",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "contract Erc721",
-				"name": "nftAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "totalSupply",
-				"type": "uint256"
-			}
-		],
-		"name": "EVENT",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "eventId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "EventName",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "TicketId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "ticketType",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "ticketOwner",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "contract Erc721",
-				"name": "nftAddress",
-				"type": "address"
-			}
-		],
-		"name": "TICKET",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_TypeOfTickets",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amountOfTickets",
-				"type": "uint256"
-			}
-		],
-		"name": "BuyTicket",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "message",
-				"type": "string"
-			}
-		],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_Event_Name",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_eventTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_NumberOfTypesOfTickets",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string[]",
-				"name": "TYPEsOfTickets",
-				"type": "string[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "pricesOfTickets",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "SupplyOftickets",
-				"type": "uint256[]"
-			}
-		],
-		"name": "CreateEvent",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
-		"name": "EventDetails",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "string",
-						"name": "Event_Name",
-						"type": "string"
-					},
-					{
-						"components": [
-							{
-								"internalType": "string",
-								"name": "TypeOfTicket",
-								"type": "string"
-							},
-							{
-								"internalType": "uint256",
-								"name": "priceOfType",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "supply",
-								"type": "uint256"
-							}
-						],
-						"internalType": "struct TicketingSystem.ticketType[]",
-						"name": "typesOfTickets",
-						"type": "tuple[]"
-					},
-					{
-						"internalType": "address",
-						"name": "owner",
-						"type": "address"
-					},
-					{
-						"internalType": "contract Erc721",
-						"name": "nft_smartContract_Address",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "EventTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "NumberOfTypesOfTickets",
-						"type": "uint256"
-					},
-					{
-						"components": [
-							{
-								"internalType": "address",
-								"name": "buyerOfTicket",
-								"type": "address"
-							},
-							{
-								"internalType": "string",
-								"name": "TypeOfTicket",
-								"type": "string"
-							},
-							{
-								"internalType": "uint256",
-								"name": "Amount_Paid",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "NftGenrated",
-								"type": "uint256"
-							}
-						],
-						"internalType": "struct TicketingSystem.TicketsOriganizer[]",
-						"name": "orgnizeTickets",
-						"type": "tuple[]"
-					},
-					{
-						"internalType": "uint256",
-						"name": "totalsupply",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct TicketingSystem.Event",
-				"name": "",
-				"type": "tuple"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "EventManagement",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "Event_Name",
-				"type": "string"
-			},
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "contract Erc721",
-				"name": "nft_smartContract_Address",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "EventTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "NumberOfTypesOfTickets",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "totalsupply",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "Id",
-				"type": "uint256"
-			}
-		],
-		"name": "Withdraw",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_TypeOfTickets",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amountOfTickets",
-				"type": "uint256"
-			}
-		],
-		"name": "getFundDetail",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "Id",
-				"type": "uint256"
-			}
-		],
-		"name": "refund",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "payable",
-		"type": "function"
-	}
-]
-			const contractAddress = "0x664362Db05c9620516580083C71A9895bBb5C41f";
-            window.web3 = await new Web3(window.ethereum);
-            window.contract = await new window.web3.eth.Contract(contractABI, contractAddress);
-            document.getElementById("contractArea").innerHTML = "Connected to Contract";
-        }
+		let account;
+		const connectMetamask = async () => {
+			if (window.ethereum !== "undefined") {
+				const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+				account = accounts[0];
+				console.log(account);
 
-        const EventCreate = async () => {
-            var eventName  = document.getElementById("eventName").value;
-			var eventTime  = document.getElementById("eventTime").value;
-            var NoOfTypes = document.getElementById("numberOfTicketTypes").value
-            var  arrayOfTypes= arr
+				document.getElementById("userArea").innerHTML = `User Account: ${account}`;
+
+
+			}
+		}
+		const connectContract = async () => {
+			var Abi;
+			await fetch('abi.json')
+
+				.then(response => response.json())
+				.then(data => {
+					// Handle the retrieved JSON data
+					Abi = data;
+					
+				})
+				.catch(error => {
+					console.error('Error loading JSON file:', error);
+				});
+
+			const contractABI = Abi;
 			
-            var arrayOfPrices = document.getElementById("arrayOfTicketprices").value;
-            var ArrayOfCount = document.getElementById("arrayOfTicketamount").value;
+			
+			const contractAddress = "0x3004B617Ad9a19eC058332F0e6Fd43bF895709c9";
+			window.web3 = await new Web3(window.ethereum);
+			window.contract = await new window.web3.eth.Contract(contractABI, contractAddress);
+			document.getElementById("contractArea").innerHTML = "Connected to Contract";
+		}
 
-            // let arrayOfTypesTicket = JSON.parse(arrayOfTypes);
-            let arrayOfprices= JSON.parse(arrayOfPrices);
-            let arrayOfcountTicket = JSON.parse(ArrayOfCount);
-            console.log(eventName,NoOfTypes,arrayOfTypes,arrayOfPrices,arrayOfcountTicket);
-            await window.contract.methods.CreateEvent(eventName,eventTime,NoOfTypes,arrayOfTypes,arrayOfprices,arrayOfcountTicket).send({from: account,gas:"10000000"});
-            
-            document.getElementById("createdEvent").innerHTML =  "event Created";
+		const EventCreate = async () => {
+			var eventName = document.getElementById("eventName").value;
+			var eventTime = document.getElementById("eventTime").value;
+			var NoOfTypes = document.getElementById("numberOfTicketTypes").value
+			var arrayOfTypes = arr
+
+			var arrayOfPrices = document.getElementById("arrayOfTicketprices").value;
+			var ArrayOfCount = document.getElementById("arrayOfTicketamount").value;
+
+			// let arrayOfTypesTicket = JSON.parse(arrayOfTypes);
+			let arrayOfprices = JSON.parse(arrayOfPrices);
+			let arrayOfcountTicket = JSON.parse(ArrayOfCount);
+			console.log(eventName, NoOfTypes, arrayOfTypes, arrayOfPrices, arrayOfcountTicket);
+			await window.contract.methods.CreateEvent(eventName, eventTime, NoOfTypes, arrayOfTypes, arrayOfprices, arrayOfcountTicket).send({ from: account, gas: "10000000" });
+
+			document.getElementById("createdEvent").innerHTML = "event Created";
 			arr = [];
 			// window.location.reload();
-    }
-
-    
-        const buyTicket = async () => {
-            const eventId = document.getElementById("eventID").value;
-            const TypeOfTicket = document.getElementById("ticketType").value;
-            const amountOfTickets = document.getElementById("ticketAmount").value;
-            
-            const val = await window.contract.methods.getFundDetail(eventId,TypeOfTicket,amountOfTickets).call();
-            console.log(val);
-            const data = await window.contract.methods.BuyTicket(eventId,TypeOfTicket,amountOfTickets).send({from: account,value : val ,gas:"3000000"});
-            document.getElementById("buy").innerHTML =  "ticket genrated successfully";
-        }
+		}
 
 
-    const Withdraw = async () => {
-            const eventId = document.getElementById("EVENTID").value;
-            const data = await window.contract.methods.Withdraw(eventId).send({from: account,gas:"3000000"});
-            document.getElementById("withdraw").innerHTML =  "owner had withdrawan his funds";
-        }
+		const buyTicket = async () => {
+			const eventId = document.getElementById("eventID").value;
+			const TypeOfTicket = document.getElementById("ticketType").value;
+			const amountOfTickets = document.getElementById("ticketAmount").value;
+
+			const val = await window.contract.methods.getFundDetail(eventId, TypeOfTicket, amountOfTickets).call();
+			console.log(val);
+			const data = await window.contract.methods.BuyTicket(eventId, TypeOfTicket, amountOfTickets).send({ from: account, value: val, gas: "3000000" });
+			document.getElementById("buy").innerHTML = "ticket genrated successfully";
+		}
 
 
-    const GetEventDetail = async () => {
-            const ID = document.getElementById("EventId").value;
+		const Withdraw = async () => {
+			const eventId = document.getElementById("EVENTID").value;
+			const data = await window.contract.methods.Withdraw(eventId).send({ from: account, gas: "3000000" });
+			document.getElementById("withdraw").innerHTML = "owner had withdrawan his funds";
+		}
+
+
+		const GetEventDetail = async () => {
+			const ID = document.getElementById("EventId").value;
 			console.log(ID);
-            const data = await window.contract.methods.EventDetails(ID).call();
-            console.log(data);
-            document.getElementById("itemDetail0").innerHTML =  "event Name = " + JSON.stringify(data.Event_Name);
-			document.getElementById("itemDetail7").innerHTML =  "event TIme  = " + JSON.stringify(data.EventTime);
-			document.getElementById("itemDetail1").innerHTML =  "typesOfTickets  = " + JSON.stringify(data.typesOfTickets);
-            document.getElementById("itemDetail2").innerHTML =  "owner  = " + JSON.stringify(data.owner);
-            document.getElementById("itemDetail3").innerHTML =  "nft_smartContract_Address = " + JSON.stringify(data.nft_smartContract_Address);
-            document.getElementById("itemDetail4").innerHTML =  "NumberOfTypesOfTickets  = " + JSON.stringify(data.NumberOfTypesOfTickets);
-            document.getElementById("itemDetail5").innerHTML =  "Tickets  creterias = " + JSON.stringify(data.orgnizeTickets);
-            document.getElementById("itemDetail6").innerHTML =  "totalsupply  = " + JSON.stringify(data.totalsupply);
-            
-    }
+			const data = await window.contract.methods.EventDetails(ID).call();
+			console.log(data);
+			document.getElementById("itemDetail0").innerHTML = "event Name = " + JSON.stringify(data.Event_Name);
+			document.getElementById("itemDetail7").innerHTML = "event TIme  = " + JSON.stringify(data.EventTime);
+			document.getElementById("itemDetail1").innerHTML = "typesOfTickets  = " + JSON.stringify(data.typesOfTickets);
+			document.getElementById("itemDetail2").innerHTML = "owner  = " + JSON.stringify(data.owner);
+			document.getElementById("itemDetail3").innerHTML = "nft_smartContract_Address = " + JSON.stringify(data.nft_smartContract_Address);
+			document.getElementById("itemDetail4").innerHTML = "NumberOfTypesOfTickets  = " + JSON.stringify(data.NumberOfTypesOfTickets);
+			document.getElementById("itemDetail5").innerHTML = "Tickets  creterias = " + JSON.stringify(data.orgnizeTickets);
+			document.getElementById("itemDetail6").innerHTML = "totalsupply  = " + JSON.stringify(data.totalsupply);
 
-	const refunds = async () => {
-            const eventId = document.getElementById("id").value;
-            const data = await window.contract.methods.refund(eventId).send({from: account,gas:"3000000"});
-            document.getElementById("refunds").innerHTML =  "owner had refunded funds and canceled event";
-        }
+		}
 
-    </script>
-   
+		const refunds = async () => {
+			const eventId = document.getElementById("id").value;
+			const data = await window.contract.methods.refund(eventId).send({ from: account, gas: "3000000" });
+			document.getElementById("refunds").innerHTML = "owner had refunded funds and canceled event";
+		}
+
+	</script>
+
 </body>
+
 </html>

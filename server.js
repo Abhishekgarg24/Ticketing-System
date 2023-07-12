@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const Web3 = require('web3');
-const ethJsSigner = require('ethjs-signer');
+
 const rpcUrl = process.env.API_URL;
 const web3 = new Web3(rpcUrl);
 const path = require('path');
@@ -29,12 +29,12 @@ contract = new web3.eth.Contract(contractABI, contractAddress);
 const creat_event = async (_Event_Name, _EventTime,_NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets) => {
   
  //three lines are for frontend.html
-  const arrayOfprices= JSON.parse(pricesOfTickets);
-  const arrayOfcountTicket = JSON.parse(SupplyOftickets);
-  await contract.methods.CreateEvent(_Event_Name,_EventTime, _NumberOfTypesOfTickets, TYPEsOfTickets, arrayOfprices, arrayOfcountTicket).send({from: web3.eth.defaultAccount, gas:"10000000"});
+  // const arrayOfprices= JSON.parse(pricesOfTickets);
+  // const arrayOfcountTicket = JSON.parse(SupplyOftickets);
+  // await contract.methods.CreateEvent(_Event_Name,_EventTime, _NumberOfTypesOfTickets, TYPEsOfTickets, arrayOfprices, arrayOfcountTicket).send({from: web3.eth.defaultAccount, gas:"10000000"});
 
   //this line is for hiting api from postman 
-	// await contract.methods.CreateEvent(_Event_Name,_EventTime, _NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets).send({from: web3.eth.defaultAccount, gas:"10000000"});
+	await contract.methods.CreateEvent(_Event_Name,_EventTime, _NumberOfTypesOfTickets, TYPEsOfTickets, pricesOfTickets, SupplyOftickets).send({from: web3.eth.defaultAccount, gas:"10000000"});
 }
 
 const buy_Ticket = async (id,
@@ -100,7 +100,7 @@ app.post('/buy_Ticket', async (req, res) => {
     res.json({ message: 'buying ticket is done successfully' });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(400).json({ error: 'An error occurred' });
   }
 });
 
@@ -119,7 +119,7 @@ app.post('/create-event', async (req, res) => {
     res.json({ message: 'Event created successfully' });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(400).json({ error: 'An error occurred' });
   }
 });
 app.post('/Refund', async (req, res) => {
@@ -131,7 +131,7 @@ app.post('/Refund', async (req, res) => {
     res.json({ message: 'rufund is successfully done' });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(400).json({ error: 'An error occurred' });
   }
 });
 app.post('/withdraw', async (req, res) => {
@@ -144,7 +144,7 @@ app.post('/withdraw', async (req, res) => {
     res.json({ message: 'withdraw is successfully done' });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(400).json({ error: 'An error occurred' });
   }
 });
 app.get('/eventDetail/:id', async (req, res) => {
@@ -154,7 +154,7 @@ app.get('/eventDetail/:id', async (req, res) => {
     res.json(detail);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(400).json({ error: 'Internal server error' });
   }
 });
 app.get("/",(req,res)=>{
